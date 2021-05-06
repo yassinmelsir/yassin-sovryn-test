@@ -14,6 +14,9 @@ export default function App() {
   const weenusContract = new web3.eth.Contract(abi, tokenAddress);
   const [balance, setBalance] = useState(0);
   const [tokenBalance, setTokenBalance] = useState('null');
+  const [inputOne, setInputOne] = useState('')
+  const [inputTwo, setInputTwo] = useState('')
+  const [transactionReceipt, setTransactionReceipt] = useState('')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
 
  
@@ -26,7 +29,6 @@ export default function App() {
   };
     
   const requestAccess = useCallback(() => requestAuth(web3Context), []);
-
 
   const getBalance = useCallback(async () => {
     let balance = accounts && accounts.length > 0 ? lib.utils.fromWei(await lib.eth.getBalance(accounts[0]), 'ether') : 'Unknown';
@@ -47,8 +49,20 @@ export default function App() {
     getTokenBalance();
   }, [accounts, getTokenBalance])
 
+  function changeHandlerOne (event) {
+    setInputOne(event.target.value)
+  }
+
+  function changeHandlerTwo (event) {
+    setInputTwo(event.target.value)
+  }
+
+  function sendToken () {
+    inputTwo > 1 && inputOne.length > 0 ? weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) : console.log('input transaction address/amount')
+  }
+
   return (
-  <div className="App bg-black text-white w-screen h-screen">
+  <div className="App bg-black text-white w-screen h-screen ">
     <div className='grid grid-flow-col place-items-center w-screen h-10'>
       <p className='text-base'>Sovryn</p>
       {accounts && accounts.length ? (
@@ -69,9 +83,29 @@ export default function App() {
     
     <div>
       {accounts && accounts.length ? (
-          <div>
-            <p>rEth Balance: {balance}</p>
-            <p>Weenus Token Balance: {tokenBalance}</p>
+          <div className='grid grid-flow-row gap-2 place-items-center'>
+            <div>
+              <form>
+                <div className='grid grid-flow-col gap-2 w-full text-black'>
+                    <div className='grid grid-flow-row gap-2 text-white place-items-start'>
+                      <p>rEth Balance:</p>
+                      <p>Weenus Balance:</p>
+                      <p >Transaction Size:</p>
+                      <p >Receiving Address:</p>
+                    </div>
+                    <div className='grid grid-flow-row gap-2 place-items-end '>
+                      <p className='text-white'>{balance}</p>
+                      <p className='text-white'>{tokenBalance}</p>
+                      <input type='text' className='w-20' placeholder={inputOne} onChange={changeHandlerOne} />
+                      <input type='text' className='w-120' placeholder={inputTwo} onChange={changeHandlerTwo} />
+                    </div>
+                    
+                    
+                    
+                </div>
+              </form>
+            </div>
+            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Send</button>
           </div>
         ) : (
           <></>
