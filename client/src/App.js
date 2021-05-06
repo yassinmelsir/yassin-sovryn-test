@@ -83,7 +83,6 @@ export default function App() {
     getTransaction();
   }, [transactionAddress])
 
-  console.log(transactionReceipt)
   return (
   <div className="App bg-black text-white w-screen h-screen ">
     <div className='grid grid-flow-col place-items-center w-screen h-10'>
@@ -127,6 +126,18 @@ export default function App() {
                     
                 </div>
               </form>
+            </div>
+            
+            <p>Transactions</p>
+            <div className='grid grid-flow-col gap-2 w-full text-black place-items-center'>
+              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
+                <p className='text-white'>Receiving Address:</p>
+                <p className='text-white'>{transactionReceipt.to}</p>
+              </div>
+              <div className='grid grid-flow-row gap-2 place-items-end '>
+                <p className='text-white'>Transaction Status:</p>
+                <p className='text-white'>{transactionReceipt.status ? 'transaction complete' : typeof transactionReceipt == 'object' ? 'transaction complete' :''}</p>
+              </div>                                            
             </div>
             <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Send</button>
           </div>
