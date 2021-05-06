@@ -14,9 +14,10 @@ export default function App() {
   const weenusContract = new web3.eth.Contract(abi, tokenAddress);
   const [balance, setBalance] = useState(0);
   const [tokenBalance, setTokenBalance] = useState('null');
-  const [inputOne, setInputOne] = useState('')
-  const [inputTwo, setInputTwo] = useState('')
-  const [transaction, setTransaction] = useState({})
+  const [value, setValue] = useState('')
+  const [address, setAddress] = useState('')
+  const [status, setStatus] = useState(null)
+  const [page, setPage] = useState('transfer')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
  
   const requestAuth = async web3Context => {
@@ -48,26 +49,29 @@ export default function App() {
     getTokenBalance();
   }, [accounts, getTokenBalance])
 
-  function changeHandlerOne (event) {
-    setInputOne(event.target.value)
+  function valueInputHandler (event) {
+    setValue(event.target.value)
   }
 
-  function changeHandlerTwo (event) {
-    setInputTwo(event.target.value)
+  function addressInputHandler (event) {
+    setAddress(event.target.value)
+  }
+
+  function reset () {
+    setPage('transfer')
+    setStatus(null)
   }
 
   function sendToken () {
-    (inputTwo.length > 0 && inputOne.length > 0) ? 
-      weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) 
+    (address.length > 0 && value.length > 0) ? 
+      weenusContract.methods.transfer(address, value).send({from: accounts[0]}) 
         .on('transactionHash', function(hash){
           console.log(hash)
-          const newTransaction = {address: inputTwo, value: inputOne, status: null}
-          setTransaction(newTransaction)
+          setPage('receipt')
         })
         .on('confirmation', function(confirmationNumber, receipt){
           console.log(confirmationNumber, receipt)
-          const completedTransaction = {value: inputOne, address: inputTwo, status: receipt.status}
-          setTransaction(completedTransaction)
+          setStatus(receipt.status)
         })
         .on('error', function(error, receipt) {
             console.log(error, receipt)
@@ -77,9 +81,7 @@ export default function App() {
   }
   const areAccounts = accounts && accounts.length
 
-  const address = (transaction.status == null && transaction.address == null) ? '' : transaction.address
-  const value = (transaction.status == null && transaction.address == null) ? '' : transaction.value
-  const status = (transaction.status == null && transaction.address == null) ? '' : transaction.status == null ? 'pending' : transaction.status ? 'successful' : 'failed'
+  const transactionComplete = address.length < 1 ? '' : status == null ? 'pending' : status ? 'successful' : 'failed'
   return (
   <div className="App bg-black text-white w-screen h-screen ">
     <div className='grid grid-flow-col place-items-center w-screen h-10'>
@@ -100,7 +102,7 @@ export default function App() {
     
     </div>
     
-    <div>
+   { page === 'transfer' && <div>
       {areAccounts ? (
           <div className='grid grid-flow-row gap-2 place-items-center'>
             <div>
@@ -115,8 +117,8 @@ export default function App() {
                     <div className='grid grid-flow-row gap-2 place-items-end '>
                       <p className='text-white'>{balance}</p>
                       <p className='text-white'>{tokenBalance}</p>
-                      <input type='text' className='w-20' placeholder={inputOne} onChange={changeHandlerOne} />
-                      <input type='text' className='w-120' placeholder={inputTwo} onChange={changeHandlerTwo} />
+                      <input type='text' className='w-20' placeholder={value} onChange={valueInputHandler} />
+                      <input type='text' className='w-120' placeholder={address} onChange={addressInputHandler} />
                     </div>
                     
                     
@@ -125,6 +127,16 @@ export default function App() {
               </form>
             </div>
             
+            
+            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Submit</button>
+          </div>
+        ) : (
+          <></>
+        )}
+    </div>}
+    { page === 'receipt' && <div>
+      {areAccounts ? (
+          <div className='grid grid-flow-row gap-2 place-items-center'>
             <p>Transactions</p>
             <div className='grid grid-flow-col gap-2 w-1/2 text-black place-items-center'>
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
@@ -137,15 +149,15 @@ export default function App() {
               </div>
               <div className='grid grid-flow-row gap-2 place-items-end '>
                 <p className='text-white'>Transaction Status:</p>
-                <p className='text-white'>{status}</p>
+                <p className='text-white'>{transactionComplete}</p>
               </div>                                            
             </div>
-            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Submit</button>
+            <button className='bg-white w-80 h-10 text-black' onClick={reset}>Send another token</button>
           </div>
         ) : (
           <></>
         )}
-    </div>
+    </div>}
 
   </div>
   );
