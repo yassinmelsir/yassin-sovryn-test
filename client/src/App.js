@@ -58,8 +58,19 @@ export default function App() {
   }
 
   function sendToken () {
-    inputTwo > 1 && inputOne.length > 0 ? weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) : console.log('input transaction address/amount')
+    (inputTwo.length > 0 && inputOne.length > 0) ? 
+      weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) 
+        .on('confirmation', function(confirmationNumber, receipt){
+            console.log(confirmationNumber, receipt)
+        })
+        .on('error', function(error, receipt) {
+            console.log(error, receipt)
+        })
+    : 
+      console.log('input transaction address/amount')
   }
+
+  console.log(weenusContract)
 
   return (
   <div className="App bg-black text-white w-screen h-screen ">
