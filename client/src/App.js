@@ -16,6 +16,7 @@ export default function App() {
   const [tokenBalance, setTokenBalance] = useState('null');
   const [inputOne, setInputOne] = useState('')
   const [inputTwo, setInputTwo] = useState('')
+  const [transactionAddress, setTransactionAddress] = useState('')
   const [transactionReceipt, setTransactionReceipt] = useState('')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
 
@@ -61,7 +62,7 @@ export default function App() {
     (inputTwo.length > 0 && inputOne.length > 0) ? 
       weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) 
         .on('transactionHash', function(hash){
-          console.log(hash)
+          setTransactionAddress(hash)
         })
         .on('confirmation', function(confirmationNumber, receipt){
             console.log(confirmationNumber, receipt)
@@ -73,11 +74,16 @@ export default function App() {
       console.log('input transaction address/amount')
   }
 
-  // track ERC20 transactions
-  // web3.eth.subscribe('pendingTransactions' [, callback]);
+  const getTransaction = useCallback(async () => {
+    let transaction = transactionAddress.length > 0 ? await web3.eth.getTransaction(transactionAddress) : 'unkown'
+    setTransactionReceipt(transaction)
+  })
 
-  // web3.eth.getTransaction(transactionHash [, callback])
+  useEffect(()=>{
+    getTransaction();
+  }, [transactionAddress])
 
+  console.log(transactionReceipt)
   return (
   <div className="App bg-black text-white w-screen h-screen ">
     <div className='grid grid-flow-col place-items-center w-screen h-10'>
