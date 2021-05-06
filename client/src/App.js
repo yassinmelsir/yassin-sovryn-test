@@ -79,26 +79,29 @@ export default function App() {
     : 
       console.log('input transaction address/amount')
   }
-  const areAccounts = accounts && accounts.length
 
+  const areAccounts = accounts && accounts.length
   const transactionComplete = address.length < 1 ? '' : status == null ? 'pending' : status ? 'successful' : 'failed'
+
   return (
-  <div className="App bg-black text-white w-screen h-screen ">
-    <div className='grid grid-flow-col place-items-center w-screen h-10'>
-      <p className='text-base'>Sovryn</p>
-      { areAccounts ? (
-          
-            <button onClick={requestAccess}>{accounts[0]}</button>
-          
-        ) : !!networkId && providerName !== 'infura' ? (
-          
-            <button onClick={requestAccess}>Connect Wallet</button>
-          
-        ) : (
-          
-            <button onClick={requestAccess}>{accounts[0]}</button>
+  <div className="App bg-black text-white w-screen h-screen grid grid-cols-1 place-items-center ">
+    <div className='absolute top-0 grid grid-flow-col place-items-center w-screen h-10'>
+      <p className='text-base absolute top-0 left-0'>Sovryn</p>
         
-        )}
+        <div className='absolute top-0 right-0'>{ areAccounts ? (
+            
+              <button onClick={requestAccess}>{accounts[0]}</button>
+            
+          ) : !!networkId && providerName !== 'infura' ? (
+            
+              <button onClick={requestAccess}>Connect Wallet</button>
+            
+          ) : (
+            
+              <button onClick={requestAccess}>{accounts[0]}</button>
+          
+          )}
+        </div>
     
     </div>
     
