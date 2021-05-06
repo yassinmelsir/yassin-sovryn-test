@@ -16,11 +16,8 @@ export default function App() {
   const [tokenBalance, setTokenBalance] = useState('null');
   const [inputOne, setInputOne] = useState('')
   const [inputTwo, setInputTwo] = useState('')
-  const [transaction, setTransaction] = useState('')
-  const [transactions, setTransactions] = useState([])
-  const [transactionReceipt, setTransactionReceipt] = useState('')
+  const [transaction, setTransaction] = useState({})
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
-
  
   const requestAuth = async web3Context => {
   try {
@@ -63,36 +60,26 @@ export default function App() {
     (inputTwo.length > 0 && inputOne.length > 0) ? 
       weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) 
         .on('transactionHash', function(hash){
-          const transaction = {hash, address: inputTwo, value: inputOne}
-          const updatedTransactionArray = [{hash, address: inputTwo, value: inputOne, status: null}].concat(transactions)
-          setTransaction(transaction)
-          setTransactions(updatedTransactionArray)
+          console.log(hash)
+          const newTransaction = {address: inputTwo, value: inputOne, status: null}
+          setTransaction(newTransaction)
         })
         .on('confirmation', function(confirmationNumber, receipt){
-            
-            setTransactionReceipt(receipt)
-            // array is updating and deleting values
-            console.log('premod', transactions)
-            console.log('confirmation', transactions)
-            const updatedTransactionArray = transactions.map(el => {return(el.hash === receipt.transactionHash ? {...el, status: receipt.status} : el)});
-            console.log('updated array', updatedTransactionArray)
-            setTransactions(updatedTransactionArray)
+          console.log(confirmationNumber, receipt)
+          const completedTransaction = {value: inputOne, address: inputTwo, status: receipt.status}
+          setTransaction(completedTransaction)
         })
         .on('error', function(error, receipt) {
             console.log(error, receipt)
-            setTransactionReceipt(receipt)
         })
     : 
       console.log('input transaction address/amount')
   }
+  const areAccounts = accounts && accounts.length
 
-  const recievingAddress = transaction.hash > 0 ? transaction.address : ''
-  const transactionValue = transaction.hash > 0 ? transaction.value : ''
-  const transactionStatus = !transaction.hash > 0 ? '' : (transactionReceipt?.status ? 'successful' : ((typeof transactionReceipt == 'object' && !transactionReceipt?.status) ? 'failed' : 'pending'))
-  
-  const areAccounts = accounts && accounts.length 
-
-
+  const address = (transaction.status == null && transaction.address == null) ? '' : transaction.address
+  const value = (transaction.status == null && transaction.address == null) ? '' : transaction.value
+  const status = (transaction.status == null && transaction.address == null) ? '' : transaction.status == null ? 'pending' : transaction.status ? 'successful' : 'failed'
   return (
   <div className="App bg-black text-white w-screen h-screen ">
     <div className='grid grid-flow-col place-items-center w-screen h-10'>
@@ -142,21 +129,18 @@ export default function App() {
             <div className='grid grid-flow-col gap-2 w-1/2 text-black place-items-center'>
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
                 <p className='text-white'>Receiving Address:</p>
-                <p className='text-white'>{recievingAddress}</p>
-                {transactions.length > 0 && transactions.map((item, key)=>{return(<p className=''>{item.address}</p>)})}
+                <p className='text-white'>{address}</p>
               </div>
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
-                <p className='text-white'>Transaction Size:</p>
-                <p className='text-white'>{transactionValue}</p>
-                {transactions.length > 0 && transactions.map((item, key)=>{return(<p className=''>{item.value}</p>)})}
+                <p className='text-white'>Transaction Value:</p>
+                <p className='text-white'>{value}</p>
               </div>
               <div className='grid grid-flow-row gap-2 place-items-end '>
                 <p className='text-white'>Transaction Status:</p>
-                <p className='text-white'>{transactionStatus}</p>
-                {transactions.length > 0 && transactions.map((item, key)=>{return(<p className='text-white'>{item.status == null ? 'pending' : item.status ? 'successful' : 'failed'}</p>)})}
+                <p className='text-white'>{status}</p>
               </div>                                            
             </div>
-            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Send</button>
+            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Submit</button>
           </div>
         ) : (
           <></>
