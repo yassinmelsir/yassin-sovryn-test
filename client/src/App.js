@@ -60,6 +60,9 @@ export default function App() {
   function sendToken () {
     (inputTwo.length > 0 && inputOne.length > 0) ? 
       weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) 
+        .on('transactionHash', function(hash){
+          console.log(hash)
+        })
         .on('confirmation', function(confirmationNumber, receipt){
             console.log(confirmationNumber, receipt)
         })
@@ -70,7 +73,10 @@ export default function App() {
       console.log('input transaction address/amount')
   }
 
-  console.log(weenusContract)
+  // track ERC20 transactions
+  // web3.eth.subscribe('pendingTransactions' [, callback]);
+
+  // web3.eth.getTransaction(transactionHash [, callback])
 
   return (
   <div className="App bg-black text-white w-screen h-screen ">
