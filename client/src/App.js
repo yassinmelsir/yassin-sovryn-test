@@ -17,7 +17,8 @@ export default function App() {
   const [inputOne, setInputOne] = useState('')
   const [inputTwo, setInputTwo] = useState('')
   const [transaction, setTransaction] = useState('')
-  const [transactions, setTransactions] = useState([])
+  const [completedTransactions, setCompletedTransactions] = useState([])
+  const [pendingTransactions, setPendingTransactions] = useState([])
   const [transactionReceipt, setTransactionReceipt] = useState('')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
 
@@ -69,7 +70,6 @@ export default function App() {
         .on('confirmation', function(confirmationNumber, receipt){
             console.log(confirmationNumber, receipt)
             setTransactionReceipt(receipt)
-            handleNewReceipt()
         })
         .on('error', function(error, receipt) {
             console.log(error, receipt)
@@ -77,14 +77,6 @@ export default function App() {
         })
     : 
       console.log('input transaction address/amount')
-  }
-
-  function handleNewReceipt() {
-    const recievingAddress = transaction.hash > 0 ? transaction.address : ''
-    const transactionValue = transaction.hash > 0 ? transaction.value : ''
-    const transactionStatus = !transaction.hash > 0 ? '' : (transactionReceipt?.status ? 'transaction success' : ((typeof transactionReceipt == 'object' && !transactionReceipt?.status) ? 'transaction failed' : 'transaction pending'))
-    const transactionHistory = [{recievingAddress, transactionValue, transactionStatus}, transactions]
-    setTransactions(transactionHistory)
   }
 
   const recievingAddress = transaction.hash > 0 ? transaction.address : ''
@@ -144,18 +136,14 @@ export default function App() {
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
                 <p className='text-white'>Receiving Address:</p>
                 <p className='text-white'>{recievingAddress}</p>
-                {transactions.length > 0 && transactions.map((transaction)=>{return(<p className='text-white'>{transaction.recievingAddress}</p>)})}
-                
               </div>
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
                 <p className='text-white'>Transaction Size:</p>
                 <p className='text-white'>{transactionValue}</p>
-                {transactions.length > 0 && transactions.map((transaction)=>{return(<p className='text-white'>{transaction.transactionValue}</p>)})}
               </div>
               <div className='grid grid-flow-row gap-2 place-items-end '>
                 <p className='text-white'>Transaction Status:</p>
                 <p className='text-white'>{transactionStatus}</p>
-                {transactions.length > 0 && transactions.map((transaction)=>{return(<p className='text-white'>{transaction.transactionStatus}</p>)})}
               </div>                                            
             </div>
             <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Send</button>
