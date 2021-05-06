@@ -16,7 +16,8 @@ export default function App() {
   const [tokenBalance, setTokenBalance] = useState('null');
   const [inputOne, setInputOne] = useState('')
   const [inputTwo, setInputTwo] = useState('')
-  const [transcation, setTransaction] = useState('')
+  const [transaction, setTransaction] = useState('')
+  const [transactions, setTransactions] = useState([])
   const [transactionReceipt, setTransactionReceipt] = useState('')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
 
@@ -67,29 +68,34 @@ export default function App() {
         })
         .on('confirmation', function(confirmationNumber, receipt){
             console.log(confirmationNumber, receipt)
+            setTransactionReceipt(receipt)
+            handleNewReceipt()
         })
         .on('error', function(error, receipt) {
             console.log(error, receipt)
+            setTransactionReceipt(receipt)
         })
     : 
       console.log('input transaction address/amount')
   }
 
-  const getTransaction = useCallback(async () => {
-    let hash = transcation.hash > 0 ? await web3.eth.getTransactionReceipt(transcation.hash) : 'unkown'
-    setTransactionReceipt(hash)
-  })
+  function handleNewReceipt() {
+    const recievingAddress = transaction.hash > 0 ? transaction.address : ''
+    const transactionValue = transaction.hash > 0 ? transaction.value : ''
+    const transactionStatus = !transaction.hash > 0 ? '' : (transactionReceipt?.status ? 'transaction success' : ((typeof transactionReceipt == 'object' && !transactionReceipt?.status) ? 'transaction failed' : 'transaction pending'))
+    const transactionHistory = [{recievingAddress, transactionValue, transactionStatus}, transactions]
+    setTransactions(transactionHistory)
+  }
 
-  useEffect(()=>{
-    getTransaction();
-  }, [transcation])
+  
+  const areAccounts = accounts && accounts.length 
 
-  console.log(transactionReceipt)
+
   return (
   <div className="App bg-black text-white w-screen h-screen ">
     <div className='grid grid-flow-col place-items-center w-screen h-10'>
       <p className='text-base'>Sovryn</p>
-      {accounts && accounts.length ? (
+      { areAccounts ? (
           
             <button onClick={requestAccess}>{accounts[0]}</button>
           
@@ -106,7 +112,7 @@ export default function App() {
     </div>
     
     <div>
-      {accounts && accounts.length ? (
+      {areAccounts ? (
           <div className='grid grid-flow-row gap-2 place-items-center'>
             <div>
               <form>
@@ -134,15 +140,19 @@ export default function App() {
             <div className='grid grid-flow-col gap-2 w-1/2 text-black place-items-center'>
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
                 <p className='text-white'>Receiving Address:</p>
-                <p className='text-white'>{transcation.hash > 0 ? transcation.address : ''}</p>
+                <p className='text-white'>{recievingAddress}</p>
+                {transactionHistory.length > 0 && transactionHistory.map((transaction)=>{return(<p className='text-white'>{transaction.recievingAddress}</p>)})}
+                
               </div>
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
                 <p className='text-white'>Transaction Size:</p>
-                <p className='text-white'>{transcation.hash > 0 ? transcation.value : ''}</p>
+                <p className='text-white'>{transactionValue}</p>
+                {transactionHistory.length > 0 && transactionHistory.map((transaction)=>{return(<p className='text-white'>{transaction.transactionValue}</p>)})}
               </div>
               <div className='grid grid-flow-row gap-2 place-items-end '>
                 <p className='text-white'>Transaction Status:</p>
-                <p className='text-white'>{!transcation.hash > 0 ? '' : transactionReceipt?.status ? 'transaction success' : (typeof transactionReceipt == 'object' && !transactionReceipt?.status) ? 'transaction failed' : 'transaction pending'}</p>
+                <p className='text-white'>{transactionStatus}</p>
+                {transactionHistory.length > 0 && transactionHistory.map((transaction)=>{return(<p className='text-white'>{transaction.transactionStatus}</p>)})}
               </div>                                            
             </div>
             <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Send</button>
