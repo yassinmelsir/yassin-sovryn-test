@@ -17,7 +17,7 @@ export default function App() {
   const [inputOne, setInputOne] = useState('')
   const [inputTwo, setInputTwo] = useState('')
   const [transaction, setTransaction] = useState('')
-  const [transactions, setTransactions] = useState({})
+  const [transactions, setTransactions] = useState([])
   const [transactionReceipt, setTransactionReceipt] = useState('')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
 
@@ -64,17 +64,18 @@ export default function App() {
       weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) 
         .on('transactionHash', function(hash){
           const transaction = {hash, address: inputTwo, value: inputOne}
-          const updatedTransactionArray = transactions.length > 0 ? [{hash, address: inputTwo, value: inputOne, status: null}].concat(transactions) : [{hash, address: inputTwo, value: inputOne, status: 'pending'}]
+          const updatedTransactionArray = [{hash, address: inputTwo, value: inputOne, status: null}].concat(transactions)
           setTransaction(transaction)
           setTransactions(updatedTransactionArray)
         })
         .on('confirmation', function(confirmationNumber, receipt){
-            console.log(confirmationNumber, receipt)
+            
             setTransactionReceipt(receipt)
-            console.log(receipt.transactionHash, receipt.status)
-            const updatedTransaction = transactions.map(el => el.hash == receipt.transactionHash ? {...el, status: receipt.status} : el);
-            const updatedTransactionArray = updatedTransaction.concat(transactions)
-            console.log(updatedTransactionArray)
+            // array is updating and deleting values
+            console.log('premod', transactions)
+            console.log('confirmation', transactions)
+            const updatedTransactionArray = transactions.map(el => {return(el.hash === receipt.transactionHash ? {...el, status: receipt.status} : el)});
+            console.log('updated array', updatedTransactionArray)
             setTransactions(updatedTransactionArray)
         })
         .on('error', function(error, receipt) {
@@ -85,7 +86,6 @@ export default function App() {
       console.log('input transaction address/amount')
   }
 
-  console.log(transactions)
   const recievingAddress = transaction.hash > 0 ? transaction.address : ''
   const transactionValue = transaction.hash > 0 ? transaction.value : ''
   const transactionStatus = !transaction.hash > 0 ? '' : (transactionReceipt?.status ? 'successful' : ((typeof transactionReceipt == 'object' && !transactionReceipt?.status) ? 'failed' : 'pending'))
