@@ -16,7 +16,7 @@ export default function App() {
   const [tokenBalance, setTokenBalance] = useState('null');
   const [inputOne, setInputOne] = useState('')
   const [inputTwo, setInputTwo] = useState('')
-  const [transactionAddress, setTransactionAddress] = useState('')
+  const [transcation, setTransaction] = useState('')
   const [transactionReceipt, setTransactionReceipt] = useState('')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
 
@@ -62,7 +62,8 @@ export default function App() {
     (inputTwo.length > 0 && inputOne.length > 0) ? 
       weenusContract.methods.transfer(inputTwo, inputOne).send({from: accounts[0]}) 
         .on('transactionHash', function(hash){
-          setTransactionAddress(hash)
+          console.log(hash)
+          setTransaction({hash, address: inputTwo, value: inputOne})
         })
         .on('confirmation', function(confirmationNumber, receipt){
             console.log(confirmationNumber, receipt)
@@ -75,14 +76,15 @@ export default function App() {
   }
 
   const getTransaction = useCallback(async () => {
-    let transaction = transactionAddress.length > 0 ? await web3.eth.getTransaction(transactionAddress) : 'unkown'
-    setTransactionReceipt(transaction)
+    let hash = transcation.hash > 0 ? await web3.eth.getTransactionReceipt(transcation.hash) : 'unkown'
+    setTransactionReceipt(hash)
   })
 
   useEffect(()=>{
     getTransaction();
-  }, [transactionAddress])
+  }, [transcation])
 
+  console.log(transactionReceipt)
   return (
   <div className="App bg-black text-white w-screen h-screen ">
     <div className='grid grid-flow-col place-items-center w-screen h-10'>
@@ -129,14 +131,18 @@ export default function App() {
             </div>
             
             <p>Transactions</p>
-            <div className='grid grid-flow-col gap-2 w-full text-black place-items-center'>
+            <div className='grid grid-flow-col gap-2 w-1/2 text-black place-items-center'>
               <div className='grid grid-flow-row gap-2 text-white place-items-start'>
                 <p className='text-white'>Receiving Address:</p>
-                <p className='text-white'>{transactionReceipt.to}</p>
+                <p className='text-white'>{transcation.hash > 0 ? transcation.address : ''}</p>
+              </div>
+              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
+                <p className='text-white'>Transaction Size:</p>
+                <p className='text-white'>{transcation.hash > 0 ? transcation.value : ''}</p>
               </div>
               <div className='grid grid-flow-row gap-2 place-items-end '>
                 <p className='text-white'>Transaction Status:</p>
-                <p className='text-white'>{transactionReceipt.status ? 'transaction complete' : typeof transactionReceipt == 'object' ? 'transaction complete' :''}</p>
+                <p className='text-white'>{!transcation.hash > 0 ? '' : transactionReceipt?.status ? 'transaction success' : (typeof transactionReceipt == 'object' && !transactionReceipt?.status) ? 'transaction failed' : 'transaction pending'}</p>
               </div>                                            
             </div>
             <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Send</button>
