@@ -66,13 +66,20 @@ const Nav = ({props}) => {
 }
 
 const Send = ({props}) => {
-  const [selectedToken, setSelectedToken] = useState('WEENUS')
-  const {balance, tokenBalance, value, address, valueInputHandler, addressInputHandler, areAccounts, sendToken} = props
+  const [selectedInput, setSelectedInput] = useState(null)
+  const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken} = props
   const containerClass = `relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-50' : 'opacity-100' }`
 
   function selectToken (token) {
     setSelectedToken(token)
   }
+
+  const buttonOneValue = selectedToken === 'rETH' ? balance * 0.1 : tokenBalance * 0.1
+  const buttonTwoValue = selectedToken === 'rETH' ? balance * 0.25 : tokenBalance * 0.25
+  const buttonThreeValue = selectedToken === 'rETH' ? balance * 0.5 : tokenBalance * 0.5
+  const buttonFourValue = selectedToken === 'rETH' ? balance * 0.75 : tokenBalance * 0.75
+  const buttonFiveValue = selectedToken === 'rETH' ? balance : tokenBalance
+
   return(
      <div style={{width: '400px', height: '500px'}} className={containerClass }>
       
@@ -87,10 +94,10 @@ const Send = ({props}) => {
 
                 <div style={{width: '300px'}} className='h-9 border rounded-lg border-hueBlue grid grid-flow-col place-items-center '>
 
-                  <button onClick={()=> selectToken('rETH')} style={{width: '150px'}} className= {`w-40 h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedToken === 'rETH' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>rETH</p></button>
+                  <button onClick={()=> selectToken('rETH')} style={{width: '150px'}} className= {` h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedToken === 'rETH' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>rETH</p></button>
                   
                   
-                  <button onClick={()=> selectToken('WEENUS')} style={{width: '150px'}}  className={`w-40 h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedToken === 'WEENUS' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>WEENUS</p></button>
+                  <button onClick={()=> selectToken('WEENUS')} style={{width: '150px'}}  className={`h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedToken === 'WEENUS' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>WEENUS</p></button>
                   
                 </div>
 
@@ -101,12 +108,26 @@ const Send = ({props}) => {
             
                 
 
-              
+                  <div style={{width: '300px'}} className='h-9 border rounded-lg border-hueBlue grid grid-flow-col place-items-center '>
+
+                      <button onClick={()=> setSelectedInput(buttonOneValue)} style={{width: '50px'}} className= {`h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedInput === buttonOneValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>10%</p></button>
+
+                      <button onClick={()=> setSelectedInput(buttonTwoValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center ${selectedInput === buttonTwoValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>25%</p></button>
+
+                      <button onClick={()=> setSelectedInput(buttonThreeValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center ${selectedInput === buttonThreeValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>50%</p></button>
+
+                      <button onClick={()=> setSelectedInput(buttonFourValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center ${selectedInput === buttonFourValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>75%</p></button>
+
+                      <button onClick={()=> setSelectedInput(buttonFiveValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedInput === buttonFiveValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>100%</p></button>
+
+
+                  </div>
 
               <form className=''>
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
                 <p className='text-left text-base text-white opacity-90'>Amount:</p>
-                      <input type='text' style={{width: '300px'}} className='h-9 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? balance + ' rETH' : tokenBalance + ' WEENUS'} onChange={valueInputHandler} />
+                      <input type='text' value={selectedInput} style={{width: '300px'}} className='h-9 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
+                      
                       <p className='text-left  text-white  text-base opacity-90'>Send To:</p>
                       <input type='text' style={{width: '300px'}} className='h-9 rounded-lg placeholder-black placeholder-opacity-50 font-bold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
                    
@@ -166,6 +187,7 @@ const App = () => {
   const [address, setAddress] = useState('')
   const [status, setStatus] = useState(null)
   const [page, setPage] = useState('send')
+  const [selectedToken, setSelectedToken] = useState('WEENUS')
 
   const getAccounts = useCallback(async () => {
     const accounts = await web3.eth.requestAccounts().then()
@@ -230,7 +252,7 @@ const App = () => {
   const props = {
     areAccounts, getAccounts, accounts, balance, 
     tokenBalance, value, address, valueInputHandler, addressInputHandler, 
-    sendToken, value, transactionComplete, reset, setAccounts
+    sendToken, setValue, transactionComplete, reset, setAccounts, selectedToken, setSelectedToken
   }
 
   return (
