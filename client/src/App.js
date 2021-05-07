@@ -66,32 +66,50 @@ const Nav = ({props}) => {
 }
 
 const Send = ({props}) => {
+  const [selectedToken, setSelectedToken] = useState('WEENUS')
   const {balance, tokenBalance, value, address, valueInputHandler, addressInputHandler, areAccounts, sendToken} = props
-  const containerClass = `grid grid-cols-1 place-items-center w-20vw h-500 mt-40 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-50' : 'opacity-100' }`
-  return(
-     <div className={containerClass}>
-      
-          <div className='grid grid-flow-row gap-2  place-items-center'>
-            <p className='text-4xl font-bold'>SEND</p>
-            
-              <div className='grid grid-cols-1 justify-items-start items-center'>
-                <p className='text-xl'>Asset:</p>
-              </div>
+  const containerClass = `relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-50' : 'opacity-100' }`
 
-              <form>
-                <div className='grid grid-flow-col gap-2 w-full text-black'>
-                    <div className='grid grid-flow-row gap-2 text-white place-items-start'>
-                      <p>rEth Balance:</p>
-                      <p>Weenus Balance:</p>
-                      <p >Transaction Size:</p>
-                      <p >Receiving Address:</p>
-                    </div>
-                    <div className='grid grid-flow-row gap-2 place-items-end '>
-                      <p className='text-white'>{balance}</p>
-                      <p className='text-white'>{tokenBalance}</p>
-                      <input type='text' className='w-20' placeholder={value} onChange={valueInputHandler} />
-                      <input type='text' className='w-120' placeholder={address} onChange={addressInputHandler} />
-                    </div>
+  function selectToken (token) {
+    setSelectedToken(token)
+  }
+  return(
+     <div style={{width: '400px', height: '500px'}} className={containerClass }>
+      
+          
+              
+                <p className='text-4xl opacity-95 font-bold'>SEND</p>
+              
+            
+  
+
+                  <p className='text-left text-base opacity-90'>Asset:</p>
+
+                <div style={{width: '300px'}} className='h-9 border rounded-lg border-hueBlue grid grid-flow-col place-items-center '>
+
+                  <button onClick={()=> selectToken('rETH')} style={{width: '150px'}} className= {`w-40 h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedToken === 'rETH' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>rETH</p></button>
+                  
+                  
+                  <button onClick={()=> selectToken('WEENUS')} style={{width: '150px'}}  className={`w-40 h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedToken === 'WEENUS' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>WEENUS</p></button>
+                  
+                </div>
+
+
+                  <p className='text-left text-xs opacity-70'>Available Balance: {selectedToken === 'rETH' ? balance + ' rETH' : tokenBalance + ' WEENUS' }</p>
+
+
+            
+                
+
+              
+
+              <form className=''>
+                <div className='grid grid-flow-row gap-2 w-full text-black'>
+                <p className='text-left text-base text-white opacity-90'>Amount:</p>
+                      <input type='text' style={{width: '300px'}} className='h-9 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? balance + ' rETH' : tokenBalance + ' WEENUS'} onChange={valueInputHandler} />
+                      <p className='text-left  text-white  text-base opacity-90'>Send To:</p>
+                      <input type='text' style={{width: '300px'}} className='h-9 rounded-lg placeholder-black placeholder-opacity-50 font-bold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
+                   
                     
                     
                     
@@ -100,8 +118,8 @@ const Send = ({props}) => {
            
             
             
-            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Submit</button>
-          </div>
+            <button className='bg-buttonColor w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={sendToken}>SUBMIT</button>
+          
         
     </div>
   )

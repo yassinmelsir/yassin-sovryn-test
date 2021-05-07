@@ -14,12 +14,18 @@ module.exports = {
         'nav': '#010100',
         'walletBg': '#383838',
         'engage': '#d7a91f',
-        'walletExit': '#686969'
+        'walletExit': '#686969',
+        'unSelectedTokenMenu': '#111519',
+        'selectedTokenMenu': '#18425a',
+        'buttonColor': '#4d3d0c'
+
       }),
       borderColor: theme => ({
         ...theme('colors'),
         DEFAULT: theme('colors.gray.300', 'currentColor'),
-        'engage': '#d7a91f'
+        'engage': '#d7a91f',
+        'hueBlue': '#1a4e6d',
+        'mainbg': '#171617',
       }),
       height: {
         '500': '500px'
