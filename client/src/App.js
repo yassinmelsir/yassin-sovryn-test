@@ -66,19 +66,33 @@ const Nav = ({props}) => {
 }
 
 const Send = ({props}) => {
-  const [selectedInput, setSelectedInput] = useState(null)
+  const [buttonIndex, setButtonIndex] = useState(null)
   const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken} = props
   const containerClass = `relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-50' : 'opacity-100' }`
 
   function selectToken (token) {
     setSelectedToken(token)
   }
+  
+  function handleAmountToggle (b,v) {
+    setButtonIndex(b)
+    setValue(v)
+  }
+  
+ 
 
-  const buttonOneValue = selectedToken === 'rETH' ? balance * 0.1 : tokenBalance * 0.1
-  const buttonTwoValue = selectedToken === 'rETH' ? balance * 0.25 : tokenBalance * 0.25
-  const buttonThreeValue = selectedToken === 'rETH' ? balance * 0.5 : tokenBalance * 0.5
-  const buttonFourValue = selectedToken === 'rETH' ? balance * 0.75 : tokenBalance * 0.75
-  const buttonFiveValue = selectedToken === 'rETH' ? balance : tokenBalance
+  const buttonOneValue = 10
+  const buttonTwoValue = 25
+  const buttonThreeValue = 50
+  const buttonFourValue = 75
+  const buttonFiveValue = 100
+  const isETHInput = selectedToken == 'rETH' ? balance : tokenBalance
+  const buttonOneInput = (buttonOneValue/100)*(isETHInput)
+  const buttonTwoInput = (buttonTwoValue/100)*(isETHInput)
+  const buttonThreeInput = (buttonThreeValue/100)*(isETHInput)
+  const buttonFourInput = (buttonFourValue/100)*(isETHInput)
+  const buttonFiveInput = (buttonFiveValue/100)*(isETHInput)
+   
 
   return(
      <div style={{width: '400px', height: '500px'}} className={containerClass }>
@@ -89,20 +103,21 @@ const Send = ({props}) => {
               
             
   
+              <div className='grid grid-flow-row gap-1'>
+                <p className='text-left text-base opacity-90'>Asset:</p>
 
-                  <p className='text-left text-base opacity-90'>Asset:</p>
+                <div className='h-9 w-80 border rounded-lg border-hueBlue grid grid-flow-col place-items-center '>
 
-                <div style={{width: '300px'}} className='h-9 border rounded-lg border-hueBlue grid grid-flow-col place-items-center '>
-
-                  <button onClick={()=> selectToken('rETH')} style={{width: '150px'}} className= {` h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedToken === 'rETH' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>rETH</p></button>
+                  <button onClick={()=> selectToken('rETH')}  className= {`w-40 h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedToken === 'rETH' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>rETH</p></button>
                   
                   
-                  <button onClick={()=> selectToken('WEENUS')} style={{width: '150px'}}  className={`h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedToken === 'WEENUS' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>WEENUS</p></button>
+                  <button onClick={()=> selectToken('WEENUS')}   className={`w-40 h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedToken === 'WEENUS' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>WEENUS</p></button>
                   
                 </div>
+                <p className='text-left text-xs opacity-70'>Available Balance: {selectedToken === 'rETH' ? balance + ' rETH' : tokenBalance + ' WEENUS' }</p>
+              </div>
 
-
-                  <p className='text-left text-xs opacity-70'>Available Balance: {selectedToken === 'rETH' ? balance + ' rETH' : tokenBalance + ' WEENUS' }</p>
+                  
 
 
             
@@ -113,7 +128,7 @@ const Send = ({props}) => {
               <form className=''>
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
                 <p className='text-left text-base text-white opacity-90'>Amount:</p>
-                      <input type='text' value={selectedInput} style={{width: '300px'}} className='h-9 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
+                      <input type='text' value={value}  className='h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
                       
                     
                     
@@ -122,26 +137,26 @@ const Send = ({props}) => {
                 </div>
               </form>
 
-              <div style={{width: '300px'}} className='h-9 border rounded-lg border-hueBlue grid grid-flow-col place-items-center '>
+               <div className='h-9 w-80  rounded-lg grid grid-flow-col text-sm '>
 
-<button onClick={()=> setSelectedInput(buttonOneValue)} style={{width: '50px'}} className= {`h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedInput === buttonOneValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>10%</p></button>
+                      <button onClick={()=> handleAmountToggle(1,buttonOneInput)}  className= {`border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-l-lg ${buttonIndex == 1 ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>{buttonOneValue}%</p></button>
 
-<button onClick={()=> setSelectedInput(buttonTwoValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center ${selectedInput === buttonTwoValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>25%</p></button>
+                      <button onClick={()=> handleAmountToggle(2,buttonTwoInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 2  ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonTwoValue}%</p></button>
 
-<button onClick={()=> setSelectedInput(buttonThreeValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center ${selectedInput === buttonThreeValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>50%</p></button>
+                      <button onClick={()=> handleAmountToggle(3,buttonThreeInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 3  ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonThreeValue}%</p></button>
 
-<button onClick={()=> setSelectedInput(buttonFourValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center ${selectedInput === buttonFourValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>75%</p></button>
+                      <button onClick={()=> handleAmountToggle(4,buttonFourInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 4 ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFourValue}%</p></button>
 
-<button onClick={()=> setSelectedInput(buttonFiveValue)} style={{width: '50px'}}  className={`h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedInput === buttonFiveValue ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>100%</p></button>
+                      <button onClick={()=> handleAmountToggle(5,buttonFiveInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-r-lg ${buttonIndex == 5 ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFiveValue}%</p></button>
 
 
-</div>
+                  </div>
 
               <form className=''>
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
             
                       <p className='text-left  text-white  text-base opacity-90'>Send To:</p>
-                      <input type='text' style={{width: '300px'}} className='h-9 rounded-lg placeholder-black placeholder-opacity-50 font-bold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
+                      <input type='text'  className='h-9 w-80 rounded-lg placeholder-black placeholder-opacity-50 font-bold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
                    
                     
                     
