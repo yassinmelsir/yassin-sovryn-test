@@ -128,7 +128,7 @@ const Send = ({props}) => {
               <form className=''>
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
                 <p className='text-left text-base text-white opacity-90'>Amount:</p>
-                      <input type='text' value={value}  className='h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
+                      <input type='text' value={value + ' ' + selectedToken}  className='h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
                       
                     
                     
