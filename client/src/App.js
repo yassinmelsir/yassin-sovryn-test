@@ -67,19 +67,27 @@ const Nav = ({props}) => {
 
 const Send = ({props}) => {
   const [buttonIndex, setButtonIndex] = useState(null)
-  const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken} = props
+  const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken, address } = props
   const containerClass = `relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-50' : 'opacity-100' }`
 
   function selectToken (token) {
-    setSelectedToken(token)
+    if (areAccounts !== null ) {
+      setSelectedToken(token)
+      setValue(0)
+    }
   }
   
   function handleAmountToggle (b,v) {
-    setButtonIndex(b)
-    setValue(v)
+    if (areAccounts !== null ) {
+      setButtonIndex(b)
+      setValue(v)
+    }
+  }
+  function handleSubmit () {
+    if (areAccounts !== null ) sendToken()
   }
   
- 
+ console.log(balance)
 
   const buttonOneValue = 10
   const buttonTwoValue = 25
@@ -128,7 +136,7 @@ const Send = ({props}) => {
               <form className=''>
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
                 <p className='text-left text-base text-white opacity-90'>Amount:</p>
-                      <input type='text' value={value + ' ' + selectedToken}  className='h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
+                      <input type='text' value={value}  className='h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
                       
                     
                     
@@ -156,7 +164,7 @@ const Send = ({props}) => {
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
             
                       <p className='text-left  text-white  text-base opacity-90'>Send To:</p>
-                      <input type='text'  className='h-9 w-80 rounded-lg placeholder-black placeholder-opacity-50 font-bold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
+                      <input type='text' value={address} className='h-9 w-80 rounded-lg placeholder-black placeholder-opacity-50 font-bold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
                    
                     
                     
@@ -166,7 +174,7 @@ const Send = ({props}) => {
            
             
             
-            <button className='bg-buttonColor w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={sendToken}>SUBMIT</button>
+            <button className='bg-buttonColor w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={handleSubmit}>SUBMIT</button>
           
         
     </div>
@@ -243,11 +251,11 @@ const App = () => {
   }, [accounts, getTokenBalance])
 
   function valueInputHandler (event) {
-    setValue(event.target.value)
+    if (areAccounts !== null ) setValue(event.target.value)
   }
 
   function addressInputHandler (event) {
-    setAddress(event.target.value)
+    if (areAccounts !== null ) setAddress(event.target.value)
   }
 
   function reset () {
