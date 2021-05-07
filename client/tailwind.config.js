@@ -12,12 +12,14 @@ module.exports = {
         ...theme('colors'),
         'mainbg': '#171617',
         'nav': '#010100',
+        'menu': '#101111',
         'walletBg': '#383838',
         'engage': '#d7a91f',
         'walletExit': '#686969',
         'unSelectedTokenMenu': '#111519',
         'selectedTokenMenu': '#18425a',
-        'buttonColor': '#4d3d0c'
+        'buttonColor': '#4d3d0c',
+        'activated': '#ffc005'
 
       }),
       borderColor: theme => ({
@@ -26,6 +28,8 @@ module.exports = {
         'engage': '#d7a91f',
         'hueBlue': '#1a4e6d',
         'mainbg': '#171617',
+        'activated': '#ffc005'
+
       }),
       height: {
         '500': '500px'
@@ -33,6 +37,7 @@ module.exports = {
       textColor: theme => theme('colors'),
       textColor: {
         'engage': '#d7a91f',
+        'activated': '#ffc005'
       }
       
     },
