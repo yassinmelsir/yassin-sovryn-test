@@ -67,7 +67,7 @@ const Nav = ({props}) => {
 
 const Send = ({props}) => {
   const [buttonIndex, setButtonIndex] = useState(null)
-  const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken, address } = props
+  const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken, address, setPage } = props
   const containerClass = `relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-50' : 'opacity-100' }`
 
   function selectToken (token) {
@@ -84,7 +84,7 @@ const Send = ({props}) => {
     }
   }
   function handleSubmit () {
-    if (areAccounts !== null ) sendToken()
+    if (areAccounts !== null && address.length !== 0 && value !== 0 ) setPage('confirm')
   }
   
  console.log(balance)
@@ -125,23 +125,11 @@ const Send = ({props}) => {
                 <p className='text-left text-xs opacity-70'>Available Balance: {selectedToken === 'rETH' ? balance + ' rETH' : tokenBalance + ' WEENUS' }</p>
               </div>
 
-                  
-
-
-            
-                
-
-                 
-
               <form className=''>
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
                 <p className='text-left text-base text-white opacity-90'>Amount:</p>
                       <input type='text' value={value}  className='h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-bold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
-                      
-                    
-                    
-                    
-                    
+          
                 </div>
               </form>
 
@@ -165,55 +153,66 @@ const Send = ({props}) => {
             
                       <p className='text-left  text-white  text-base opacity-90'>Send To:</p>
                       <input type='text' value={address} className='h-9 w-80 rounded-lg placeholder-black placeholder-opacity-50 font-bold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
-                   
-                    
-                    
-                    
                 </div>
               </form>
-           
-            
-            
-            <button className='bg-buttonColor w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={handleSubmit}>SUBMIT</button>
+            <button className='bg-buttonColor w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={handleSubmit}>SUBMIT</button> 
+    </div>
+  )
+}
+
+const Confirmation = ({props}) => {
+  const {accounts, address, value, txFee, sendToken, selectedToken, setPage } = props
+  const containerClass = `relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white opacity-100 `
+
+  function handleSubmit () {
+    if (address.length !== 0 && value !== 0) {
+      sendToken()
+      setPage('receipt')
+    }  
+  }
+   
+
+  return(
+     <div style={{width: '400px', height: '500px'}} className={containerClass}>
+
+      <p className='text-4xl opacity-95 font-bold'>Review Transaction</p>
+
+      <p className='text-2xl opacity-95 font-bold'>SEND</p>
+      <p className='text-2xl opacity-95 font-bold'>{value}{selectedToken === 'rETH' ? 'rETH' : 'WEENUS'}</p>
           
-        
+      <p className='text-left text-base opacity-90'>from: {accounts[0]}</p>
+      <p className='text-left text-base opacity-90'>to: {address}</p>
+
+      <p className='text-left text-base opacity-90'>Tx Fee:            {txFee}</p>
+          
+      <button className='bg-buttonColor w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={handleSubmit}>CONFIRM</button> 
+
     </div>
   )
 }
 
 const Receipt = ({props}) => {
-  const { address, value, transactionComplete, reset, areAccounts } = props
+  const {transactionComplete, reset,txHash } = props
+  const containerClass = `relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white opacity-100 `
+
   return(
-    <div>
-      {areAccounts ? (
-          <div className='grid grid-flow-row gap-2 place-items-center'>
-            <p>Transactions</p>
-            <div className='grid grid-flow-col gap-2 w-1/2 text-black place-items-center'>
-              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
-                <p className='text-white'>Receiving Address:</p>
-                <p className='text-white'>{address}</p>
-              </div>
-              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
-                <p className='text-white'>Transaction Value:</p>
-                <p className='text-white'>{value}</p>
-              </div>
-              <div className='grid grid-flow-row gap-2 place-items-end '>
-                <p className='text-white'>Transaction Status:</p>
-                <p className='text-white'>{transactionComplete}</p>
-              </div>                                            
-            </div>
-            <button className='bg-white w-80 h-10 text-black' onClick={reset}>Send another token</button>
-          </div>
-        ) : (
-          <></>
-        )}
+     <div style={{width: '400px', height: '500px'}} className={containerClass}>
+
+      <p className='text-4xl opacity-95 font-bold'>Review Transaction</p>
+
+      <p className='text-2xl opacity-95 font-bold'>{transactionComplete}</p>
+
+      <p className='text-left text-base opacity-90'>{txHash}</p>
+          
+      <button className='bg-buttonColor w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={reset}>CLOSE</button> 
+
     </div>
   )
 }
 
+
 const App = () => {
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:5730");
-  console.log(web3)
   const [accounts, setAccounts] = useState(null)
   const weenusContract = new web3.eth.Contract(abi, tokenAddress);
   const [balance, setBalance] = useState(0);
@@ -223,6 +222,8 @@ const App = () => {
   const [status, setStatus] = useState(null)
   const [page, setPage] = useState('send')
   const [selectedToken, setSelectedToken] = useState('WEENUS')
+  const [txHash, setTxHash] = useState(null)
+  const txFee = '0.0006'
 
   const getAccounts = useCallback(async () => {
     const accounts = await web3.eth.requestAccounts().then()
@@ -268,7 +269,7 @@ const App = () => {
       weenusContract.methods.transfer(address, value).send({from: accounts[0]}) 
         .on('transactionHash', function(hash){
           console.log(hash)
-          setPage('receipt')
+          setTxHash(hash)
         })
         .on('confirmation', function(confirmationNumber, receipt){
           console.log(confirmationNumber, receipt)
@@ -285,8 +286,8 @@ const App = () => {
   const transactionComplete = address.length < 1 ? '' : status == null ? 'pending' : status ? 'successful' : 'failed'
 
   const props = {
-    areAccounts, getAccounts, accounts, balance, 
-    tokenBalance, value, address, valueInputHandler, addressInputHandler, 
+    areAccounts, getAccounts, accounts, balance, setPage, txHash, 
+    tokenBalance, value, address, valueInputHandler, addressInputHandler, txFee,
     sendToken, setValue, transactionComplete, reset, setAccounts, selectedToken, setSelectedToken
   }
 
@@ -294,7 +295,8 @@ const App = () => {
   <div className="App bg-mainbg text-white w-screen h-screen grid grid-cols-1 justify-items-center items-start">
     
     <Nav props={props} />
-    <Send props={props} /> 
+    {page === 'send' && <Send props={props} /> }
+    { page === 'confirm' && <Confirmation props={props}/>}
     { page === 'receipt' && <Receipt props={props}/>}
 
   </div>
