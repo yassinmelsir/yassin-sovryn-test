@@ -2,12 +2,137 @@ import React, { useCallback, useState, useEffect } from 'react';
 import './App.css';
 import { useWeb3 } from '@openzeppelin/network/react';
 import Web3 from 'web3';  
+import { ReactSVG } from 'react-svg'
+import logo from './sovryn.svg'
+import { IoMdExit } from "react-icons/io";
+import {SiReactos} from "react-icons/si";
+
 
 const infuraProjectId = 'a47dfbccb702458c84339d41f760756c';
 const tokenAddress = "0x101848D5C5bBca18E6b4431eEdF6B95E9ADF82FA";
+
 const abi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"tokens","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"acceptOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"drip","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"tokens","type":"uint256"},{"name":"data","type":"bytes"}],"name":"approveAndCall","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"newOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"tokenAddress","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transferAnyERC20Token","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"tokenOwner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Approval","type":"event"}]
 
-export default function App() {
+const ExitButton = ({props}) => {
+  const {requestAccess, walletAddress} = props
+  return(
+    <div className='w-40 h-9 border rounded-lg border-black grid grid-flow-col place-items-center '>
+      <div className=' w-8 h-full grid grid-cols-1 place-items-center rounded-l-lg bg-walletBg w-full'><p className='text-xs font-semibold'>{walletAddress}</p></div>
+      
+      <div className=' w-8 h-full grid grid-cols-1 place-items-center bg-walletBg w-full'><SiReactos color="red" className='w-5 h-5' /> </div>
+      
+      <div  className=' w-full h-full grid grid-cols-1 place-items-center rounded-r-lg bg-walletExit'>
+        <button onClick={requestAccess} className='w-6 h-6 grid grid-cols-1 place-items-center'><IoMdExit color='#d7a91f' className='bg-opacity-0 w-6 h-6' /></button>
+      </div>
+    </div>
+  )
+}
+
+const Nav = ({props}) => {
+
+  const { areAccounts, requestAccess, accounts, providerName, networkId } = props
+
+  if (areAccounts) {var walletAddress = `${accounts[0].slice(0,4)}...${accounts[0].slice(accounts[0].length-5,accounts[0].length-1)}`}
+
+  const buttonProps = { walletAddress, requestAccess}
+
+  return(
+    <div className='absolute top-0 grid grid-flow-col place-items-center w-screen h-14 bg-nav'>
+      <div className='grid grid-cols-1 place-items-center absolute left-5'>
+        <ReactSVG src={logo} />
+      </div>
+      
+        
+      <div className='grid grid-cols-1 place-items-center absolute right-5 '>
+        { areAccounts ? (
+            
+              <ExitButton props={buttonProps} />
+            
+          ) : !!networkId && providerName !== 'infura' ? (
+            
+              <button className='w-40 h-9 border rounded-lg text-engage border-engage ' onClick={requestAccess}>Engage Wallet</button>
+            
+          ) : (
+            
+            <ExitButton props={buttonProps} />
+          
+          )}
+      </div>
+      
+    
+    </div>
+  )
+}
+
+const Send = ({props}) => {
+  const {balance, tokenBalance, value, address, valueInputHandler, addressInputHandler, areAccounts, sendToken} = props
+  return(
+    <div className='grid grid-cols-1 place-items-center absolute top-10 w-screen h-sceen'>
+      {areAccounts ? (
+          <div className='grid grid-flow-row gap-2 place-items-center'>
+            <div>
+              <form>
+                <div className='grid grid-flow-col gap-2 w-full text-black'>
+                    <div className='grid grid-flow-row gap-2 text-white place-items-start'>
+                      <p>rEth Balance:</p>
+                      <p>Weenus Balance:</p>
+                      <p >Transaction Size:</p>
+                      <p >Receiving Address:</p>
+                    </div>
+                    <div className='grid grid-flow-row gap-2 place-items-end '>
+                      <p className='text-white'>{balance}</p>
+                      <p className='text-white'>{tokenBalance}</p>
+                      <input type='text' className='w-20' placeholder={value} onChange={valueInputHandler} />
+                      <input type='text' className='w-120' placeholder={address} onChange={addressInputHandler} />
+                    </div>
+                    
+                    
+                    
+                </div>
+              </form>
+            </div>
+            
+            
+            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Submit</button>
+          </div>
+        ) : (
+          <></>
+        )}
+    </div>
+  )
+}
+
+const Receipt = ({props}) => {
+  const { address, value, transactionComplete, reset, areAccounts } = props
+  return(
+    <div>
+      {areAccounts ? (
+          <div className='grid grid-flow-row gap-2 place-items-center'>
+            <p>Transactions</p>
+            <div className='grid grid-flow-col gap-2 w-1/2 text-black place-items-center'>
+              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
+                <p className='text-white'>Receiving Address:</p>
+                <p className='text-white'>{address}</p>
+              </div>
+              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
+                <p className='text-white'>Transaction Value:</p>
+                <p className='text-white'>{value}</p>
+              </div>
+              <div className='grid grid-flow-row gap-2 place-items-end '>
+                <p className='text-white'>Transaction Status:</p>
+                <p className='text-white'>{transactionComplete}</p>
+              </div>                                            
+            </div>
+            <button className='bg-white w-80 h-10 text-black' onClick={reset}>Send another token</button>
+          </div>
+        ) : (
+          <></>
+        )}
+    </div>
+  )
+}
+
+const App = () => {
 
   const web3Context = useWeb3(`wss://mainnet.infura.io/ws/v3/${infuraProjectId}`);
   const web3 = new Web3(window.ethereum);
@@ -17,7 +142,7 @@ export default function App() {
   const [value, setValue] = useState('')
   const [address, setAddress] = useState('')
   const [status, setStatus] = useState(null)
-  const [page, setPage] = useState('transfer')
+  const [page, setPage] = useState('send')
   const { networkId, networkName, accounts, providerName, lib  } = web3Context;
  
   const requestAuth = async web3Context => {
@@ -58,7 +183,7 @@ export default function App() {
   }
 
   function reset () {
-    setPage('transfer')
+    setPage('send')
     setStatus(null)
   }
 
@@ -83,85 +208,20 @@ export default function App() {
   const areAccounts = accounts && accounts.length
   const transactionComplete = address.length < 1 ? '' : status == null ? 'pending' : status ? 'successful' : 'failed'
 
+  const props = {
+    areAccounts, requestAccess, accounts, networkId, providerName, balance, 
+    tokenBalance, value, address, valueInputHandler, addressInputHandler, 
+    sendToken, value, transactionComplete, reset 
+  }
+
   return (
-  <div className="App bg-black text-white w-screen h-screen grid grid-cols-1 place-items-center ">
-    <div className='absolute top-0 grid grid-flow-col place-items-center w-screen h-10'>
-      <p className='text-base absolute top-0 left-0'>Sovryn</p>
-        
-        <div className='absolute top-0 right-0'>{ areAccounts ? (
-            
-              <button onClick={requestAccess}>{accounts[0]}</button>
-            
-          ) : !!networkId && providerName !== 'infura' ? (
-            
-              <button onClick={requestAccess}>Connect Wallet</button>
-            
-          ) : (
-            
-              <button onClick={requestAccess}>{accounts[0]}</button>
-          
-          )}
-        </div>
+  <div className="App bg-mainbg text-white w-screen h-screen grid grid-cols-1 place-items-center ">
     
-    </div>
-    
-   { page === 'transfer' && <div>
-      {areAccounts ? (
-          <div className='grid grid-flow-row gap-2 place-items-center'>
-            <div>
-              <form>
-                <div className='grid grid-flow-col gap-2 w-full text-black'>
-                    <div className='grid grid-flow-row gap-2 text-white place-items-start'>
-                      <p>rEth Balance:</p>
-                      <p>Weenus Balance:</p>
-                      <p >Transaction Size:</p>
-                      <p >Receiving Address:</p>
-                    </div>
-                    <div className='grid grid-flow-row gap-2 place-items-end '>
-                      <p className='text-white'>{balance}</p>
-                      <p className='text-white'>{tokenBalance}</p>
-                      <input type='text' className='w-20' placeholder={value} onChange={valueInputHandler} />
-                      <input type='text' className='w-120' placeholder={address} onChange={addressInputHandler} />
-                    </div>
-                    
-                    
-                    
-                </div>
-              </form>
-            </div>
-            
-            
-            <button className='bg-white w-80 h-10 text-black' onClick={sendToken}>Submit</button>
-          </div>
-        ) : (
-          <></>
-        )}
-    </div>}
-    { page === 'receipt' && <div>
-      {areAccounts ? (
-          <div className='grid grid-flow-row gap-2 place-items-center'>
-            <p>Transactions</p>
-            <div className='grid grid-flow-col gap-2 w-1/2 text-black place-items-center'>
-              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
-                <p className='text-white'>Receiving Address:</p>
-                <p className='text-white'>{address}</p>
-              </div>
-              <div className='grid grid-flow-row gap-2 text-white place-items-start'>
-                <p className='text-white'>Transaction Value:</p>
-                <p className='text-white'>{value}</p>
-              </div>
-              <div className='grid grid-flow-row gap-2 place-items-end '>
-                <p className='text-white'>Transaction Status:</p>
-                <p className='text-white'>{transactionComplete}</p>
-              </div>                                            
-            </div>
-            <button className='bg-white w-80 h-10 text-black' onClick={reset}>Send another token</button>
-          </div>
-        ) : (
-          <></>
-        )}
-    </div>}
+    <Nav props={props} />
+    { false && <Send props={props} />}
+    { page === 'receipt' && <Receipt props={props}/>}
 
   </div>
   );
 }
+export default App;
