@@ -13,7 +13,7 @@ const tokenAddress = "0x101848D5C5bBca18E6b4431eEdF6B95E9ADF82FA";
 const abi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"tokens","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"acceptOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"drip","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"tokens","type":"uint256"},{"name":"data","type":"bytes"}],"name":"approveAndCall","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"newOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"tokenAddress","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transferAnyERC20Token","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"tokenOwner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Approval","type":"event"}]
 
 const Wallet = ({props}) => {
-  const {setAccounts, walletAddress, setPage, setAddress, setValue, setStatus, setBalance, setTokenBalance} = props
+  const {setAccounts, walletAddress, setPage, accounts }  = props
   
   function exit () {
     setAccounts(null)
@@ -23,9 +23,9 @@ const Wallet = ({props}) => {
 
   return(
     <div className='w-40 h-9 border rounded-lg border-black grid grid-flow-col place-items-center '>
-      <div className=' w-8 h-full grid grid-cols-1 place-items-center rounded-l-lg bg-walletBg w-full'><p className='text-xs font-semibold'>{walletAddress}</p></div>
+      <div className=' h-full grid grid-cols-1 place-items-center rounded-l-lg bg-walletBg w-full'><button onClick={() => navigator.clipboard.writeText(accounts[0])} className='text-xs font-semibold'>{walletAddress}</button></div>
       
-      <div className=' w-8 h-full grid grid-cols-1 place-items-center bg-walletBg w-full'><FaFirefoxBrowser color="purple" className='w-5 h-5' /> </div>
+      <div className=' h-full grid grid-cols-1 place-items-center bg-walletBg w-full'><FaFirefoxBrowser color="purple" className='w-5 h-5' /> </div>
       
       <div  className=' w-full h-full grid grid-cols-1 place-items-center rounded-r-lg bg-walletExit'>
         <button onClick={exit} className='w-6 h-6 grid grid-cols-1 place-items-center'><IoMdExit color='#d7a91f' className='bg-opacity-0 w-6 h-6' /></button>
@@ -41,7 +41,7 @@ const Nav = ({props}) => {
 
   if (areAccounts) {var walletAddress = `${accounts[0].slice(0,4)}...${accounts[0].slice(accounts[0].length-5,accounts[0].length-1)}`}
 
-  const walletProps = { walletAddress, getAccounts, setAccounts, setPage }
+  const walletProps = { walletAddress, getAccounts, setAccounts, setPage, accounts }
 
   return(
     <div className='absolute top-0 grid grid-flow-col place-items-center w-screen h-14 bg-nav'>
