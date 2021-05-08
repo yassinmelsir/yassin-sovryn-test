@@ -36,7 +36,7 @@ const Wallet = ({props}) => {
 
 const Nav = ({props}) => {
 
-  const { areAccounts, getAccounts, accounts, setAccounts, setPage, setAddress, setValue, setStatus, setBalance, setTokenBalance } = props
+  const { areAccounts, getAccounts, accounts, setAccounts, setPage } = props
 
 
   if (areAccounts) {var walletAddress = `${accounts[0].slice(0,4)}...${accounts[0].slice(accounts[0].length-5,accounts[0].length-1)}`}
@@ -69,7 +69,7 @@ const Nav = ({props}) => {
 
 const Send = ({props}) => {
   const [buttonIndex, setButtonIndex] = useState(null)
-  const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken, address, setPage } = props
+  const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, setValue, selectedToken, setSelectedToken, address, setPage } = props
   const containerClass = `bg-menu relative p-8 grid grid-cols-1 place-items-center mt-20 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-10' : 'opacity-100' }`
 
   function selectToken (token) {
@@ -94,7 +94,7 @@ const Send = ({props}) => {
   const buttonThreeValue = 50
   const buttonFourValue = 75
   const buttonFiveValue = 100
-  const isETHInput = selectedToken == 'rETH' ? balance : tokenBalance
+  const isETHInput = selectedToken === 'rETH' ? balance : tokenBalance
   const buttonOneInput = (buttonOneValue/100)*(isETHInput)
   const buttonTwoInput = (buttonTwoValue/100)*(isETHInput)
   const buttonThreeInput = (buttonThreeValue/100)*(isETHInput)
@@ -135,15 +135,15 @@ const Send = ({props}) => {
 
                <div className='h-9 w-80  rounded-lg grid grid-flow-col text-sm '>
 
-                      <button onClick={()=> handleAmountToggle(1,buttonOneInput)}  className= {`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-l-lg ${buttonIndex == 1 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`}><p className=''>{buttonOneValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(1,buttonOneInput)}  className= {`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-l-lg ${buttonIndex === 1 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`}><p className=''>{buttonOneValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(2,buttonTwoInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 2  ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonTwoValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(2,buttonTwoInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex === 2  ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonTwoValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(3,buttonThreeInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 3  ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonThreeValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(3,buttonThreeInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex === 3  ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonThreeValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(4,buttonFourInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 4 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFourValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(4,buttonFourInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex === 4 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFourValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(5,buttonFiveInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-r-lg ${buttonIndex == 5 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFiveValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(5,buttonFiveInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-r-lg ${buttonIndex === 5 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFiveValue}%</p></button>
 
 
                   </div>
@@ -160,7 +160,7 @@ const Send = ({props}) => {
   )
 }
 
-const Confirmation = ({props}) => {
+const Confirm = ({props}) => {
   const {accounts, address, value, txFee, sendToken, selectedToken, setPage } = props
   const containerClass = `bg-menu relative grid grid-cols-1 place-items-center mt-20 border-opacity-20 rounded-xl border border-white opacity-100 `
 
@@ -211,9 +211,9 @@ const Receipt = ({props}) => {
 
       <p className='text-xl opacity-50 font-light italic'>Status {transactionComplete}</p>  
 
-      <div className='grid grid-cols-2 w-full place-items-center'>
-        <p className='text-left text-sm opacity-70'>Tx Hash:</p>
-        <p className='text-left text-activated text-xs opacity-70'>{txHash}</p>
+      <div className='grid grid-flow-col w-full place-items-center'>
+        <p style={{fontSize: '8px'}} className='text-left w-full opacity-70'>Tx Hash:</p>
+        <p style={{fontSize: '7px'}} className='text-left text-activated opacity-70'>{txHash}</p>
       </div>
           
       <button className='focus:outline-none border hover:bg-activated hover:border-mainBg hover:text-black border-activated bg-mainBg w-40 h-12 text-activated text-xl font-bold rounded-lg' onClick={reset}>CLOSE</button> 
@@ -224,7 +224,8 @@ const Receipt = ({props}) => {
 
 
 const App = () => {
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:5730");
+
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:3000");
   const [accounts, setAccounts] = useState(null)
   const weenusContract = new web3.eth.Contract(abi, tokenAddress);
   const [balance, setBalance] = useState(0);
@@ -307,8 +308,8 @@ const App = () => {
   <div className="App bg-mainbg text-white w-screen h-full xl:h-screen grid grid-cols-1 justify-items-center items-start">
     
     <Nav props={props} />
-    {page === 'send' && <Send props={props} /> }
-    { page === 'confirm' && <Confirmation props={props}/>}
+    { page === 'send' && <Send props={props} /> }
+    { page === 'confirm' && <Confirm props={props}/>}
     { page === 'receipt' && <Receipt props={props}/>}
 
   </div>
