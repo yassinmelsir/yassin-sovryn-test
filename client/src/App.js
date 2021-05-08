@@ -23,12 +23,12 @@ const Wallet = ({props}) => {
 
   return(
     <div className='w-40 h-9 border rounded-lg border-black grid grid-flow-col place-items-center '>
-      <div className=' h-full grid grid-cols-1 place-items-center rounded-l-lg bg-walletBg w-full'><button onClick={() => navigator.clipboard.writeText(accounts[0])} className='text-xs font-semibold'>{walletAddress}</button></div>
+      <div className=' h-full grid grid-cols-1 place-items-center rounded-l-lg hover:bg-walletExit bg-walletBg w-full'><button onClick={() => navigator.clipboard.writeText(accounts[0])} className='focus:outline-none text-xs font-semibold'>{walletAddress}</button></div>
       
       <div className=' h-full grid grid-cols-1 place-items-center bg-walletBg w-full'><FaFirefoxBrowser color="purple" className='w-5 h-5' /> </div>
       
-      <div  className=' w-full h-full grid grid-cols-1 place-items-center rounded-r-lg bg-walletExit'>
-        <button onClick={exit} className='w-6 h-6 grid grid-cols-1 place-items-center'><IoMdExit color='#d7a91f' className='bg-opacity-0 w-6 h-6' /></button>
+      <div  className=' w-full h-full grid grid-cols-1 place-items-center hover:bg-walletBg rounded-r-lg bg-walletExit'>
+        <button onClick={exit} className='focus:outline-none w-6 h-6 grid grid-cols-1 place-items-center'><IoMdExit color='#d7a91f' className='bg-opacity-0 w-6 h-6' /></button>
       </div>
     </div>
   )
@@ -57,7 +57,7 @@ const Nav = ({props}) => {
                       
           ) : (
             
-            <button className='w-40 h-9 border rounded-lg text-engage border-engage ' onClick={getAccounts}>Engage Wallet</button>
+            <button className='w-40 h-9 border rounded-lg hover:bg-activated hover:text-black hover:border-black font-semibold text-engage border-engage ' onClick={getAccounts}>Engage Wallet</button>
           
           )}
       </div>
@@ -89,8 +89,6 @@ const Send = ({props}) => {
     if (areAccounts !== null && address.length !== 0 && value !== 0 ) setPage('confirm')
   }
   
- console.log(balance)
-
   const buttonOneValue = 10
   const buttonTwoValue = 25
   const buttonThreeValue = 50
@@ -118,10 +116,10 @@ const Send = ({props}) => {
 
                 <div className='h-9 w-80 border rounded-lg border-hueBlue grid grid-flow-col place-items-center '>
 
-                  <button onClick={()=> selectToken('rETH')}  className= {`w-40 h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedToken === 'rETH' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className='grid grid-flow-col place-items-center'><FaEthereum />rETH</p></button>
+                  <button onClick={()=> selectToken('rETH')}  className= {`focus:outline-none w-40 h-full grid grid-cols-1 place-items-center rounded-l-lg ${selectedToken === 'rETH' ? ' bg-selectedTokenMenu' : ' bg-unSelectedTokenMenu'}`}><p className='grid grid-flow-col place-items-center'><FaEthereum />rETH</p></button>
                   
                   
-                  <button onClick={()=> selectToken('WEENUS')}   className={`w-40 h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedToken === 'WEENUS' ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className='grid grid-flow-col place-items-center'><GiBiceps color="yellow"/>WEENUS</p></button>
+                  <button onClick={()=> selectToken('WEENUS')}   className={`focus:outline-none w-40 h-full grid grid-cols-1 place-items-center rounded-r-lg ${selectedToken === 'WEENUS' ? 'bg-selectedTokenMenu ' : ' bg-unSelectedTokenMenu'}`} ><p className='grid grid-flow-col place-items-center'><GiBiceps color="yellow"/>WEENUS</p></button>
                   
                 </div>
                 <p className='text-left text-xs opacity-70'>Available Balance: {selectedToken === 'rETH' ? balance + ' rETH' : tokenBalance + ' WEENUS' }</p>
@@ -130,22 +128,22 @@ const Send = ({props}) => {
               <form className=''>
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
                 <p className='text-left text-base text-white opacity-90'>Amount:</p>
-                      <input type='text' value={value}  className='h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-semibold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
+                      <input type='text' value={value}  className='focus:outline-none h-9 w-80 rounded-lg text-black bg-opacity-80 placeholder-black font-semibold placeholder-opacity-70 placeholder-opacity-100 text-center' placeholder={ selectedToken === 'rETH' ? value + ' rETH' : value + ' WEENUS'} onChange={valueInputHandler} />
           
                 </div>
               </form>
 
                <div className='h-9 w-80  rounded-lg grid grid-flow-col text-sm '>
 
-                      <button onClick={()=> handleAmountToggle(1,buttonOneInput)}  className= {`border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-l-lg ${buttonIndex == 1 ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`}><p className=''>{buttonOneValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(1,buttonOneInput)}  className= {`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-l-lg ${buttonIndex == 1 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`}><p className=''>{buttonOneValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(2,buttonTwoInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 2  ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonTwoValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(2,buttonTwoInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 2  ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonTwoValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(3,buttonThreeInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 3  ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonThreeValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(3,buttonThreeInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 3  ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonThreeValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(4,buttonFourInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 4 ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFourValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(4,buttonFourInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center ${buttonIndex == 4 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFourValue}%</p></button>
 
-                      <button onClick={()=> handleAmountToggle(5,buttonFiveInput)}   className={`border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-r-lg ${buttonIndex == 5 ? 'bg-selectedTokenMenu' : 'bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFiveValue}%</p></button>
+                      <button onClick={()=> handleAmountToggle(5,buttonFiveInput)}   className={`focus:outline-none border border-hueBlue h-full grid grid-cols-1 place-items-center rounded-r-lg ${buttonIndex == 5 ? 'hover:bg-unSelectedTokenMenu bg-selectedTokenMenu' : 'hover:bg-selectedTokenMenu bg-unSelectedTokenMenu'}`} ><p className=''>{buttonFiveValue}%</p></button>
 
 
                   </div>
@@ -154,10 +152,10 @@ const Send = ({props}) => {
                 <div className='grid grid-flow-row gap-2 w-full text-black'>
             
                       <p className='text-left  text-white  text-base opacity-90'>Send To:</p>
-                      <input type='text' value={address} className='h-9 w-80 rounded-lg placeholder-black placeholder-opacity-50 font-semibold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
+                      <input type='text' value={address} className='focus:outline-none h-9 w-80 rounded-lg placeholder-black placeholder-opacity-50 font-semibold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
                 </div>
               </form>
-            <button className={`${address.length !== 0 && value !== 0 ? 'bg-activated ' : 'bg-buttonColor' } w-40 h-12 text-black text-xl font-bold rounded-lg`} onClick={handleSubmit}>SUBMIT</button> 
+            <button className={`focus:outline-none ${address.length !== 0 && value !== 0 ? 'bg-activated ' : 'bg-buttonColor' } w-40 h-12 text-black text-xl font-bold rounded-lg`} onClick={handleSubmit}>SUBMIT</button> 
     </div>
   )
 }
@@ -194,7 +192,7 @@ const Confirmation = ({props}) => {
       </div>
       
           
-      <button className='bg-activated w-40 h-12 text-black text-xl font-bold  rounded-lg' onClick={handleSubmit}>CONFIRM</button> 
+      <button className='focus:outline-none bg-activated w-40 h-12 text-black text-xl font-bold  rounded-lg' onClick={handleSubmit}>CONFIRM</button> 
 
     </div>
   )
@@ -218,7 +216,7 @@ const Receipt = ({props}) => {
         <p className='text-left text-activated text-xs opacity-70'>{txHash}</p>
       </div>
           
-      <button className='border border-activated bg-mainBg w-40 h-12 text-activated text-xl font-bold rounded-lg' onClick={reset}>CLOSE</button> 
+      <button className='focus:outline-none border border-activated bg-mainBg w-40 h-12 text-activated text-xl font-bold rounded-lg' onClick={reset}>CLOSE</button> 
 
     </div>
   )
@@ -306,7 +304,7 @@ const App = () => {
   }
 
   return (
-  <div className="App bg-mainbg text-white w-screen h-screen grid grid-cols-1 justify-items-center items-start">
+  <div className="App bg-mainbg text-white w-screen h-full xl:h-screen grid grid-cols-1 justify-items-center items-start">
     
     <Nav props={props} />
     {page === 'send' && <Send props={props} /> }
