@@ -4,8 +4,7 @@ import Web3 from 'web3';
 import { ReactSVG } from 'react-svg'
 import logo from './sovryn.svg'
 import { IoMdExit } from "react-icons/io";
-import {SiReactos} from "react-icons/si";
-import {FaEthereum} from "react-icons/fa";
+import {FaEthereum, FaFirefoxBrowser} from "react-icons/fa";
 import {GiBiceps} from 'react-icons/gi';
 import {ImArrowDown} from 'react-icons/im';
 import {CgCheckO} from 'react-icons/cg'
@@ -13,13 +12,12 @@ import {CgCheckO} from 'react-icons/cg'
 const tokenAddress = "0x101848D5C5bBca18E6b4431eEdF6B95E9ADF82FA";
 const abi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"tokens","type":"uint256"}],"name":"approve","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"acceptOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"drip","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transfer","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"tokens","type":"uint256"},{"name":"data","type":"bytes"}],"name":"approveAndCall","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"newOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"tokenAddress","type":"address"},{"name":"tokens","type":"uint256"}],"name":"transferAnyERC20Token","outputs":[{"name":"success","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"tokenOwner","type":"address"},{"name":"spender","type":"address"}],"name":"allowance","outputs":[{"name":"remaining","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"tokenOwner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"tokens","type":"uint256"}],"name":"Approval","type":"event"}]
 
-const ExitButton = ({props}) => {
-  const {setAccounts, walletAddress} = props
+const Wallet = ({props}) => {
+  const {setAccounts, walletAddress, setPage, setAddress, setValue, setStatus, setBalance, setTokenBalance} = props
   
-  function removeAccounts () {
-    console.log('remove')
+  function exit () {
     setAccounts(null)
-    console.log('remove accounts')
+    setPage('send')
   }
 
 
@@ -27,10 +25,10 @@ const ExitButton = ({props}) => {
     <div className='w-40 h-9 border rounded-lg border-black grid grid-flow-col place-items-center '>
       <div className=' w-8 h-full grid grid-cols-1 place-items-center rounded-l-lg bg-walletBg w-full'><p className='text-xs font-semibold'>{walletAddress}</p></div>
       
-      <div className=' w-8 h-full grid grid-cols-1 place-items-center bg-walletBg w-full'><SiReactos color="red" className='w-5 h-5' /> </div>
+      <div className=' w-8 h-full grid grid-cols-1 place-items-center bg-walletBg w-full'><FaFirefoxBrowser color="purple" className='w-5 h-5' /> </div>
       
       <div  className=' w-full h-full grid grid-cols-1 place-items-center rounded-r-lg bg-walletExit'>
-        <button onClick={removeAccounts} className='w-6 h-6 grid grid-cols-1 place-items-center'><IoMdExit color='#d7a91f' className='bg-opacity-0 w-6 h-6' /></button>
+        <button onClick={exit} className='w-6 h-6 grid grid-cols-1 place-items-center'><IoMdExit color='#d7a91f' className='bg-opacity-0 w-6 h-6' /></button>
       </div>
     </div>
   )
@@ -38,12 +36,12 @@ const ExitButton = ({props}) => {
 
 const Nav = ({props}) => {
 
-  const { areAccounts, getAccounts, accounts, setAccounts } = props
+  const { areAccounts, getAccounts, accounts, setAccounts, setPage, setAddress, setValue, setStatus, setBalance, setTokenBalance } = props
 
 
   if (areAccounts) {var walletAddress = `${accounts[0].slice(0,4)}...${accounts[0].slice(accounts[0].length-5,accounts[0].length-1)}`}
 
-  const buttonProps = { walletAddress, getAccounts, setAccounts }
+  const walletProps = { walletAddress, getAccounts, setAccounts, setPage }
 
   return(
     <div className='absolute top-0 grid grid-flow-col place-items-center w-screen h-14 bg-nav'>
@@ -55,7 +53,7 @@ const Nav = ({props}) => {
       <div className='grid grid-cols-1 place-items-center absolute right-5 '>
         { areAccounts ? (
             
-            <ExitButton props={buttonProps} />
+            <Wallet props={walletProps} />
                       
           ) : (
             
@@ -72,7 +70,7 @@ const Nav = ({props}) => {
 const Send = ({props}) => {
   const [buttonIndex, setButtonIndex] = useState(null)
   const {balance, tokenBalance, value, valueInputHandler, addressInputHandler, areAccounts, sendToken, setValue, selectedToken, setSelectedToken, address, setPage } = props
-  const containerClass = `bg-menu relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-10' : 'opacity-100' }`
+  const containerClass = `bg-menu relative p-8 grid grid-cols-1 place-items-center mt-20 border-opacity-20 rounded-xl border border-white ${ !areAccounts ? 'opacity-10' : 'opacity-100' }`
 
   function selectToken (token) {
     if (areAccounts !== null ) {
@@ -107,7 +105,7 @@ const Send = ({props}) => {
    
 
   return(
-     <div style={{width: '400px', height: '500px'}} className={containerClass }>
+     <div style={{width: '380px', height: '500px'}} className={containerClass }>
       
           
               
@@ -166,7 +164,7 @@ const Send = ({props}) => {
 
 const Confirmation = ({props}) => {
   const {accounts, address, value, txFee, sendToken, selectedToken, setPage } = props
-  const containerClass = `bg-menu relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white opacity-100 `
+  const containerClass = `bg-menu relative grid grid-cols-1 place-items-center mt-20 border-opacity-20 rounded-xl border border-white opacity-100 `
 
   function handleSubmit () {
     if (address.length !== 0 && value !== 0 ) {
@@ -177,20 +175,26 @@ const Confirmation = ({props}) => {
    
 
   return(
-     <div style={{width: '400px', height: '500px'}} className={containerClass}>
+     <div style={{width: '350px', height: '500px'}} className={containerClass}>
 
-      <p className='text-4xl opacity-95 font-bold'>Review Transaction</p>
+      <p className='text-2xl opacity-90'>Review Transaction</p>
 
-      <p className='text-2xl opacity-95 font-bold'>SEND</p>
-      <p className='text-2xl opacity-95 font-bold'>{value}{selectedToken === 'rETH' ? 'rETH' : 'WEENUS'}</p>
+      <div className='relative'>
+        <p className='text-xl opacity-90 '>SEND</p>
+        <p className='text-xl opacity-90 '>{value}  {selectedToken === 'rETH' ? 'rETH' : 'WEENUS'}</p>
+      </div>
+      
           
-      <p className='text-left text-base opacity-90'>from: {accounts[0]}</p>
-      <ImArrowDown color="white" className='w-40 h-40' />
-      <p className='text-left text-base opacity-90'>to: {address}</p>
-
-      <p className='text-left text-base opacity-90'>Tx Fee:            {txFee}</p>
+      <p className='text-left text-xs opacity-70'>From: {accounts[0]}</p>
+      <ImArrowDown color="white" className='w-10 h-10' />
+      <p className='text-left text-xs opacity-70'>To: {address}</p>
+      <div className='grid grid-cols-2 w-80 place-items-center'>
+        <p className='text-left text-xs opacity-70'>Tx Fee:</p>
+        <p className='text-left text-xs opacity-70'>{txFee} {selectedToken}</p>
+      </div>
+      
           
-      <button className='bg-activated w-40 h-12 text-black text-xl font-bold rounded-lg' onClick={handleSubmit}>CONFIRM</button> 
+      <button className='bg-activated w-40 h-12 text-black text-xl font-bold  rounded-lg' onClick={handleSubmit}>CONFIRM</button> 
 
     </div>
   )
@@ -198,18 +202,21 @@ const Confirmation = ({props}) => {
 
 const Receipt = ({props}) => {  
   const {transactionComplete, reset,txHash } = props
-  const containerClass = `bg-menu relative grid grid-cols-1 place-items-center mt-40 border-opacity-20 rounded-xl border border-white opacity-100 `
+  const containerClass = `bg-menu p-8 relative grid grid-cols-1 place-items-center mt-20 border-opacity-20 rounded-xl border border-white opacity-100 `
 
   return(
-     <div style={{width: '400px', height: '500px'}} className={containerClass}>
+     <div style={{width: '350px', height: '350px'}} className={containerClass}>
 
-      <p className='text-4xl opacity-95 font-bold'>Review Transaction</p>
+      <p className='text-2xl opacity-90 '>Transaction Details</p>
 
       <CgCheckO color="#4fcdc5" className='w-20 h-20' />
 
-      <p className='text-2xl opacity-95 font-bold'>Status {transactionComplete}</p>  
+      <p className='text-xl opacity-50 font-light italic'>Status {transactionComplete}</p>  
 
-      <p className='text-left text-xs opacity-90'>Tx Hash: {txHash}</p>
+      <div className='grid grid-cols-2 w-80 place-items-center'>
+        <p className='text-left text-sm opacity-70'>Tx Hash:</p>
+        <p className='text-left text-activated text-xs opacity-70'>{txHash}</p>
+      </div>
           
       <button className='border border-activated bg-mainBg w-40 h-12 text-activated text-xl font-bold rounded-lg' onClick={reset}>CLOSE</button> 
 
