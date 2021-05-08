@@ -155,7 +155,7 @@ const Send = ({props}) => {
                       <input type='text' value={address} className='focus:outline-none h-9 w-80 rounded-lg placeholder-black placeholder-opacity-50 font-semibold text-center text-black bg-opacity-80' placeholder={'Type or Paste Address'} onChange={addressInputHandler} />
                 </div>
               </form>
-            <button className={`focus:outline-none ${address.length !== 0 && value !== 0 ? 'bg-activated ' : 'bg-buttonColor' } w-40 h-12 text-black text-xl font-bold rounded-lg`} onClick={handleSubmit}>SUBMIT</button> 
+            <button className={`focus:outline-none ${address.length !== 0 && value !== 0 ? 'bg-activated ' : 'bg-buttonColor' } w-40 h-12 text-black border border-black hover:bg-mainbg hover:text-activated hover:border-activated text-xl font-bold rounded-lg`} onClick={handleSubmit}>SUBMIT</button> 
     </div>
   )
 }
@@ -192,7 +192,7 @@ const Confirmation = ({props}) => {
       </div>
       
           
-      <button className='focus:outline-none bg-activated w-40 h-12 text-black text-xl font-bold  rounded-lg' onClick={handleSubmit}>CONFIRM</button> 
+      <button className='focus:outline-none bg-activated w-40 h-12 text-black border border-black hover:bg-mainbg hover:text-activated hover:border-activated text-xl font-bold  rounded-lg' onClick={handleSubmit}>CONFIRM</button> 
 
     </div>
   )
@@ -211,12 +211,12 @@ const Receipt = ({props}) => {
 
       <p className='text-xl opacity-50 font-light italic'>Status {transactionComplete}</p>  
 
-      <div className='grid grid-cols-2 w-80 place-items-center'>
+      <div className='grid grid-cols-2 w-full place-items-center'>
         <p className='text-left text-sm opacity-70'>Tx Hash:</p>
         <p className='text-left text-activated text-xs opacity-70'>{txHash}</p>
       </div>
           
-      <button className='focus:outline-none border border-activated bg-mainBg w-40 h-12 text-activated text-xl font-bold rounded-lg' onClick={reset}>CLOSE</button> 
+      <button className='focus:outline-none border hover:bg-activated hover:border-mainBg hover:text-black border-activated bg-mainBg w-40 h-12 text-activated text-xl font-bold rounded-lg' onClick={reset}>CLOSE</button> 
 
     </div>
   )
