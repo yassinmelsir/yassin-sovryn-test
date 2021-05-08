@@ -305,7 +305,7 @@ const App = () => {
   }
 
   return (
-  <div className="App bg-mainbg text-white w-screen h-full xl:h-screen grid grid-cols-1 justify-items-center items-start">
+  <div className={`App bg-mainbg text-white w-screen ${ page === 'receipt' ? 'h-screen' : 'h-full'} xl:h-screen grid grid-cols-1 justify-items-center items-start`}>
     
     <Nav props={props} />
     { page === 'send' && <Send props={props} /> }
