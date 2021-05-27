@@ -1,6 +1,4 @@
 # yassin-sovryn-test
-Audition for sovryn
-
+Mock-up of the Sovryn Defi Dashboard
 Hosted at: https://yassin-sovryn-test.netlify.app
 
-React SPA based on backend outlined in: https://github.com/creed-victor/frontend-test
